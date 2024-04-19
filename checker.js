@@ -1,5 +1,6 @@
 const fs = require("fs"); // Importing fs to allow us to use it.
-const readline = require('readline-sync');  // Import readline-sync for synchronous input
+const { listeners } = require("process");
+const readline = require('readline-sync');  // Import readline-sync for synnchronous input
 
 
 // No need for a comment as the function name is self-describing.
@@ -51,17 +52,26 @@ function getPasswordStrength(password) {
       return "Weak";
     }
   }
-
+  const inputFile = "./common_passwords.txt"
+  const data = fs.readFileSync(inputFile, "utf-8")
+  const lines = data.split(/\n/)
 
 function getPasswordFromUser() {
     const password = readline.question("Please enter your password: ", {
         hideEchoBack: true  // Masks the password input for privacy
     });
-    const currentDateTime = getCurrentDateTimeFormatted();
-    fs.appendFileSync(outputFile, `${currentDateTime}\n`, "utf-8");
+    if(lines.includes(password)){
+      console.log("PLEASE DO NOT INCLUDE THESE WEAK PASSWORDS")
+    }
 
     const strength = getPasswordStrength(password);
+    
     console.log(`Password strength: ${strength}`);
+  let splitPassword = password.split("").reverse().join("")
+    fs.appendFileSync("./entered_password.txt", `${splitPassword} ` , "utf-8")
+
+    const currentDateTime = getCurrentDateTimeFormatted();
+    fs.appendFileSync("./entered_password.txt" ,`${currentDateTime}\n`, "utf-8");
 
     if (strength === "Strong") {
         console.log("Your password is strong.");
